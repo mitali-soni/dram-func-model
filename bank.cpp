@@ -110,7 +110,7 @@ void Bank::write(const BusPacket *busPacket)
 		newRowNode->row = busPacket->row;
 		newRowNode->data = busPacket->data;
 		newRowNode->next = rowHeadNode;
-		cout<<"writing data : " << *(int*)(newRowNode->data) << endl;
+		//cout<<"writing data : " << *(int*)(newRowNode->data) << endl;
 		rowEntries[busPacket->column] = newRowNode;
 	}
 	else
