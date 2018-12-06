@@ -10,10 +10,11 @@
 
 using namespace std;
 using namespace DRAMSim;
-unsigned NUM_COLS = 1024;
 Bank::Bank(ostream &dramsim_log_):
 		rowEntries(NUM_COLS),
-		dramsim_log(dramsim_log_)
+		dramsim_log(dramsim_log_),
+		lastAccessedRow(0),
+		lastAccessedCol(0)
 {}
 
 /* The bank class is just a glorified sparse storage data structure
@@ -33,6 +34,14 @@ Bank::Bank(ostream &dramsim_log_):
  */
 
 
+void Bank::printTrace(unsigned int bank, int num_cols_acc, std::ofstream &tracefile) {
+//tracefile << "Writing this to a file.\n"
+	
+	for( int i = 0; i< num_cols_acc; i +=2)
+		tracefile << bank << " " << this->lastAccessedRow << " " << this->lastAccessedCol + i << "\n";
+
+
+}
 
 Bank::DataStruct *Bank::searchForRow(unsigned row, DataStruct *head)
 {
@@ -64,7 +73,7 @@ void Bank::read(BusPacket *busPacket)
 		void *garbage = calloc(32,1);
 		((long *)garbage)[0] = 0xdeadbeef; // tracer value
 		busPacket->data = garbage;
-		cout<<std::hex<<((long *)busPacket->data)[0]<<endl;
+		//cout<<std::hex<<((long *)busPacket->data)[0]<<endl;
 	}
 	else // found it
 	{
@@ -101,6 +110,7 @@ void Bank::write(const BusPacket *busPacket)
 		newRowNode->row = busPacket->row;
 		newRowNode->data = busPacket->data;
 		newRowNode->next = rowHeadNode;
+		cout<<"writing data : " << *(int*)(newRowNode->data) << endl;
 		rowEntries[busPacket->column] = newRowNode;
 	}
 	else
@@ -117,158 +127,158 @@ void Bank::write(const BusPacket *busPacket)
 }
 
 
-vector<int> Bank::pimxor(BusPacket *left, BusPacket *right)
-{
-	vector<int> res;
-	if (left -> data != NULL && right -> data != NULL) {
-		vector<int> * p = (vector<int> * )left -> data;
-		vector<int> * q = (vector<int> * )right -> data;
-        
-        	vector<int>::iterator iterp = p -> begin();
-		vector<int>::iterator iterq = q -> begin();
-		
-
-		while (iterp != p -> end() && iterq != q -> end()) 
-		{
-			//printf("%d\n", *iterp);
-			//printf("%d\n",*iterq);
-			int num1 = (* iterp);
-			int num2 = (*iterq);
-			if (num1 == 1 && num2 == 0)
-			{
-				res.push_back(1);
-			} 
-			else if (num1 == 0 && num2 == 1) 
-			{
-				res.push_back(1);
-			}
-			else
-			{
-				res.push_back(0);
-			}
-			 
-			//:printf("%d \n", tmp);
-			//res.push_back(tmp);
-			iterp++;
-			iterq++;
-		}
-
-		
-
-
-	}
-	return res;
-
-}
-
-
-vector<int> Bank::pimCorrector(BusPacket * busPacket)
-{
-	vector<int> res;
-
-	if (busPacket-> data == NULL)
-	{
-		return res;
-	}
-
-	vector<int> *p = (vector<int> *) busPacket -> data;
-
-	int size = 0;
-	vector<int>::iterator iterp = p -> begin();
-	while (iterp != p -> end()) 
-	{       iterp++;
-		size++;
-	}
-
-	iterp = p -> begin();
-	
-	while (iterp <= p->end())
-	{
-		int tmp1 = (*iterp);
-		iterp++;
-		int tmp2 = (*iterp);
-		iterp++;
-		if (tmp1 == 0 && tmp2 == 1) {
-			res.push_back(0);
-		} else if (tmp1 == 1 && tmp2 == 0) {
-			res.push_back(1);
-		}
-	}
-	
-	if (res.size() ==  size) {
-		return res;
-	}
-
-	vector<int>::iterator iterq = p -> begin();
-	while (res.size() < size) 
-	{
-		res.push_back(* iterq);
-		iterq++;
-	}
-
-	return res;
-}
-
-
-vector<int> Bank::pimconcate(const BusPacket *left, const BusPacket *right)
-{
-        vector<int> res;        
-	if (left -> data != NULL && right -> data != NULL) {
-		
-		vector<int> * p = (vector<int> *) left -> data;
-		vector<int>::iterator iterp = p -> begin();
-
-		while (iterp != p -> end()) 
-		{
-			res.push_back(*iterp);
-			iterp++;
-		}
-
-		vector<int> * q = (vector<int> *) right -> data;
-		vector<int>::iterator iterq = q -> begin();
-		while (iterq != q -> end())
-		{
-			res.push_back(*iterq);
-			iterq++;
-
-		}
-
-        
-	}
-	return res;
-
-}
-
-vector<int> Bank::pimcomp(const BusPacket *weight, const BusPacket * stream)
-{
-	vector<int> res;
-	if (weight -> data != NULL && stream -> data != NULL) 
-	{
-		vector<int> * p = (vector<int> *) weight -> data;
-		vector<int> * q = (vector<int> *) stream -> data;
-
-		vector<int>::iterator iterp = p -> begin();
-		vector<int>::iterator iterq = q -> begin();
-
-		if (p->size() != q->size()) 
-		{
-			return res;
-		}
-
-		for (int i = 0; i < p-> size(); i++) 
-		{
-			if (*iterq == 1)
-			{
-				res.push_back(*iterp);
-			}
-			else
-			{
-				res.push_back(0);
-			}
-			iterp++;
-			iterq++;
-		}
-		
-	}
-	return res;
-}
+//vector<int> Bank::pimxor(BusPacket *left, BusPacket *right)
+//{
+//	vector<int> res;
+//	if (left -> data != NULL && right -> data != NULL) {
+//		vector<int> * p = (vector<int> * )left -> data;
+//		vector<int> * q = (vector<int> * )right -> data;
+//        
+//        	vector<int>::iterator iterp = p -> begin();
+//		vector<int>::iterator iterq = q -> begin();
+//		
+//
+//		while (iterp != p -> end() && iterq != q -> end()) 
+//		{
+//			//printf("%d\n", *iterp);
+//			//printf("%d\n",*iterq);
+//			int num1 = (* iterp);
+//			int num2 = (*iterq);
+//			if (num1 == 1 && num2 == 0)
+//			{
+//				res.push_back(1);
+//			} 
+//			else if (num1 == 0 && num2 == 1) 
+//			{
+//				res.push_back(1);
+//			}
+//			else
+//			{
+//				res.push_back(0);
+//			}
+//			 
+//			//:printf("%d \n", tmp);
+//			//res.push_back(tmp);
+//			iterp++;
+//			iterq++;
+//		}
+//
+//		
+//
+//
+//	}
+//	return res;
+//
+//}
+//
+//
+//vector<int> Bank::pimCorrector(BusPacket * busPacket)
+//{
+//	vector<int> res;
+//
+//	if (busPacket-> data == NULL)
+//	{
+//		return res;
+//	}
+//
+//	vector<int> *p = (vector<int> *) busPacket -> data;
+//
+//	int size = 0;
+//	vector<int>::iterator iterp = p -> begin();
+//	while (iterp != p -> end()) 
+//	{       iterp++;
+//		size++;
+//	}
+//
+//	iterp = p -> begin();
+//	
+//	while (iterp <= p->end())
+//	{
+//		int tmp1 = (*iterp);
+//		iterp++;
+//		int tmp2 = (*iterp);
+//		iterp++;
+//		if (tmp1 == 0 && tmp2 == 1) {
+//			res.push_back(0);
+//		} else if (tmp1 == 1 && tmp2 == 0) {
+//			res.push_back(1);
+//		}
+//	}
+//	
+//	if (res.size() ==  size) {
+//		return res;
+//	}
+//
+//	vector<int>::iterator iterq = p -> begin();
+//	while (res.size() < size) 
+//	{
+//		res.push_back(* iterq);
+//		iterq++;
+//	}
+//
+//	return res;
+//}
+//
+//
+//vector<int> Bank::pimconcate(const BusPacket *left, const BusPacket *right)
+//{
+//        vector<int> res;        
+//	if (left -> data != NULL && right -> data != NULL) {
+//		
+//		vector<int> * p = (vector<int> *) left -> data;
+//		vector<int>::iterator iterp = p -> begin();
+//
+//		while (iterp != p -> end()) 
+//		{
+//			res.push_back(*iterp);
+//			iterp++;
+//		}
+//
+//		vector<int> * q = (vector<int> *) right -> data;
+//		vector<int>::iterator iterq = q -> begin();
+//		while (iterq != q -> end())
+//		{
+//			res.push_back(*iterq);
+//			iterq++;
+//
+//		}
+//
+//        
+//	}
+//	return res;
+//
+//}
+//
+//vector<int> Bank::pimcomp(const BusPacket *weight, const BusPacket * stream)
+//{
+//	vector<int> res;
+//	if (weight -> data != NULL && stream -> data != NULL) 
+//	{
+//		vector<int> * p = (vector<int> *) weight -> data;
+//		vector<int> * q = (vector<int> *) stream -> data;
+//
+//		vector<int>::iterator iterp = p -> begin();
+//		vector<int>::iterator iterq = q -> begin();
+//
+//		if (p->size() != q->size()) 
+//		{
+//			return res;
+//		}
+//
+//		for (int i = 0; i < p-> size(); i++) 
+//		{
+//			if (*iterq == 1)
+//			{
+//				res.push_back(*iterp);
+//			}
+//			else
+//			{
+//				res.push_back(0);
+//			}
+//			iterp++;
+//			iterq++;
+//		}
+//		
+//	}
+//	return res;
+//}
