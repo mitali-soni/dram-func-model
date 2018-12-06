@@ -36,43 +36,34 @@ void printVector(vector <int> vec) {
 }
 
 
-vector<int> pim_xor(BusPacket *left, BusPacket *right)
+vector<int> pim_xor(vector<int> left, vector<int> right)
 {
 	vector<int> res;
-	if (left -> data != NULL && right -> data != NULL) {
-		vector<int> * p = (vector<int> * )left -> data;
-		vector<int> * q = (vector<int> * )right -> data;
-        
-        	vector<int>::iterator iterp = p -> begin();
-		vector<int>::iterator iterq = q -> begin();
-		
+        vector<int>::iterator iterp = left.begin();
+	vector<int>::iterator iterq = right.begin();
+	
 
-		while (iterp != p -> end() && iterq != q -> end()) 
+	while (iterp != left.end() && iterq != right.end()) 
+	{
+		int num1 = (* iterp);
+		int num2 = (*iterq);
+		if (num1 == 1 && num2 == 0)
 		{
-			int num1 = (* iterp);
-			int num2 = (*iterq);
-			if (num1 == 1 && num2 == 0)
-			{
-				res.push_back(1);
-			} 
-			else if (num1 == 0 && num2 == 1) 
-			{
-				res.push_back(1);
-			}
-			else
-			{
-				res.push_back(0);
-			}
-			 
-			//:printf("%d \n", tmp);
-			//res.push_back(tmp);
-			iterp++;
-			iterq++;
+			res.push_back(1);
+		} 
+		else if (num1 == 0 && num2 == 1) 
+		{
+			res.push_back(1);
 		}
-
-		
-
-
+		else
+		{
+			res.push_back(0);
+		}
+		 
+		//:printf("%d \n", tmp);
+		//res.push_back(tmp);
+		iterp++;
+		iterq++;
 	}
 	return res;
 
@@ -309,7 +300,7 @@ int main( ) {
 	//logic to parse the input file
 	//Format of the input file : 3 bit bank indes, 13 bit row index, 0x1234 0x4567 0x1256 ... 1024 values
 	//std::ifstream infile("input_data.txt");
-	std::ifstream infile("pattern_200.txt");
+	std::ifstream infile("pattern_real.txt");
 
 	std::string line;
 	const char *hexstring = "0xabcdef0";
@@ -395,8 +386,10 @@ int main( ) {
 				//cout<<value<<endl;
 			}
         		//post process the data read from each bank -> xor, concat, corrector
-			vector<int> xor1 = pim_xor(vals[0], vals[1]);
-			vector<int> xor2 = pim_xor(vals[2], vals[3]);
+			//vector<int> xor1 = pim_xor(*(int*)(vals[0]->data), *(int*)(vals[1]->data));
+			//vector<int> xor2 = pim_xor(*(int*)(vals[2]->data), *(int*)(vals[3]->data));
+			vector<int> xor1 = pim_xor(data[0], data[1]);
+			vector<int> xor2 = pim_xor(data[2], data[3]);
 			cout << "Input 1" << endl; 
         		printVector(data[0]); 
 			cout << "Input 2" << endl; 
@@ -407,15 +400,20 @@ int main( ) {
         		printVector(data[2]); 
 			cout << "Input 4" << endl; 
         		printVector(data[3]); 
-			cout << "XOR 1" << endl; 
+			cout << "XOR 2" << endl; 
         		printVector(xor2); 
-			vector<int> concatenate = pim_concatenate(xor1, xor2);
-        		printVector(concatenate); 
-			cout<< "Concatenate Output" << endl;
-			vector<int> dataCorrector = pim_Corrector(concatenate);
-			cout<<"Corrector Output" << endl;
-        		printVector(dataCorrector);
-			int outputbit = pim_comp(weights[count], dataCorrector, 16);
+			vector<int> xor_final = pim_xor(xor1, xor2);
+			cout << "XOR Final" << endl; 
+        		printVector(xor_final); 
+			int outputbit = pim_comp(weights[count], xor_final, 16);
+			cout<<"Final Output Bit: " <<outputbit<< endl;
+			//vector<int> concatenate = pim_concatenate(xor1, xor2);
+			//cout<< "Concatenate Output" << endl;
+        		//printVector(concatenate); 
+			//vector<int> dataCorrector = pim_Corrector(concatenate);
+			//cout<<"Corrector Output" << endl;
+        		//printVector(dataCorrector);
+			//int outputbit = pim_comp(weights[count], dataCorrector, 16);
 			//cout<<"Final Output Bit: " <<outputbit<< endl;
 			cntl_granularity --;
 			bsfile << outputbit ;

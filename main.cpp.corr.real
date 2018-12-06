@@ -16,8 +16,8 @@ using namespace DRAMSim;
 #define NUM_BANKS_RAND 4
 //#define NUM_COLS_ACC 16
 //#define NUM_COLS_ACC 32
-#define NUM_COLS_ACC 64
-//#define NUM_COLS_ACC 128
+//#define NUM_COLS_ACC 64
+#define NUM_COLS_ACC 128
 //#define NUM_COLS_ACC 256
 //#define NUM_COLS_ACC 512
 
@@ -309,7 +309,7 @@ int main( ) {
 	//logic to parse the input file
 	//Format of the input file : 3 bit bank indes, 13 bit row index, 0x1234 0x4567 0x1256 ... 1024 values
 	//std::ifstream infile("input_data.txt");
-	std::ifstream infile("pattern_200.txt");
+	std::ifstream infile("pattern_real.txt");
 
 	std::string line;
 	const char *hexstring = "0xabcdef0";

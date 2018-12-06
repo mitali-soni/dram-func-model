@@ -61,8 +61,8 @@ Bank::DataStruct *Bank::searchForRow(unsigned row, DataStruct *head)
 
 void Bank::read(BusPacket *busPacket)
 {
-	//DataStruct *rowHeadNode = rowEntries[busPacket->column];
-	DataStruct *rowHeadNode = rowEntries[0];
+	DataStruct *rowHeadNode = rowEntries[busPacket->column];
+	//DataStruct *rowHeadNode = rowEntries[0];
 	DataStruct *foundNode = NULL;
 
 	if ((foundNode = Bank::searchForRow(busPacket->row, rowHeadNode)) == NULL)
