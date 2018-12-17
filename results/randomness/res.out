@@ -1,0 +1,47 @@
+Tests of Distinguishability from Random
+TEST: monobit_test
+  Ones count   = 58
+  Zeroes count = 70
+  PASS
+  P=0.288844366346
+TEST: frequency_within_block_test
+  n = 128
+  N = 6
+  M = 20
+  PASS
+  P=0.013753967744
+TEST: runs_test
+  prop  0.453125
+  tau  0.176776695297
+  vobs  55.0
+  PASS
+  P=0.132380914046
+TEST: longest_run_ones_in_a_block_test
+  n = 128
+  K = 3
+  M = 8
+  N = 16
+  chi_sq = 1.02274297309
+  PASS
+  P=0.795749055264
+TEST: binary_matrix_rank_test
+  Number of blocks 0
+  Data bits used: 0
+  Data bits discarded: 128
+  Number of blocks must be greater than 37
+  FAIL
+  P=0.0
+TEST: dft_test
+  N0 = 60.800000
+  N1 = 61.000000
+  PASS
+  P=0.871131491597
+TEST: non_overlapping_template_matching_test
+  PASS
+  P=0.868530879489
+TEST: overlapping_template_matching_test
+Insufficient data. 128 bit provided. 1,028,016 bits required
+  FAIL
+  P=0.0
+TEST: maurers_universal_test
+Error. Need at least 387840 bits. Got 128.
