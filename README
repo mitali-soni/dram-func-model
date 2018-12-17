@@ -1,0 +1,7 @@
+Functional model for ece 752 project
+
+The bank.cpp defines the function which is related to bank's operations.
+
+The buspacket.cpp defines the unit of the data structure in the DRAM.
+
+The pim.cpp defines the PIM operations.
