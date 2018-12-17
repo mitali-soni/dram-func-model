@@ -65,7 +65,7 @@ Data* Bank::find(uint64_t addr, Data* data) {
 Data* Bank::pimxor(uint64_t addr1, uint64_t addr2, Data* data1, Data* data2) {
     Data* left = find(addr1, data1);
     Data* right = find(addr2, data2);
-    int digits[16] = {0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    int digits[16] = {0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0};
     Data* res = new Data(-1, -1, -1, digits);
 
     if (left != NULL && right != NULL) {
