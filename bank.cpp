@@ -126,6 +126,30 @@ void Bank::write(const BusPacket *busPacket)
 	}
 }
 
+vector<vector<int>> Bank::chooseBank(DataStruct * bank)
+{
+        vector<vector<int>> res;
+
+        while (bank -> next != NULL)
+        {
+                vector<int> row;
+
+                vector<int> * p = (vector<int> *) bank -> data;
+                vector<int>::iterator iterp = p -> begin();
+
+                for (int i = 0; i < p -> size(); i++)
+                {
+                        row.push_back(*iterp);
+
+                }
+                bank = bank -> next;
+                res.push_back(row);
+        }
+
+        return res;
+}
+
+
 
 //vector<int> Bank::pimxor(BusPacket *left, BusPacket *right)
 //{

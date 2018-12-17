@@ -29,6 +29,7 @@ public:
 	void write(const BusPacket *busPacket);
 	void load(const BusPacket *busPacket, vector<int> * value);
         void printTrace(unsigned int bank, int num_cols_acc, std::ofstream &tracefile); 
+	vector<vector<int>> chooseBank(DataStruct * bank);
 
 	unsigned int lastAccessedRow;
 	unsigned int lastAccessedCol;
