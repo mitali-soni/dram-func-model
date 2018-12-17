@@ -20,6 +20,7 @@ using namespace DRAMSim;
 //#define NUM_COLS_ACC 128
 //#define NUM_COLS_ACC 256
 //#define NUM_COLS_ACC 512
+//#define NUM_COLS_ACC 1024
 
 //To generate various granularity of traces, change the filename and NUM_COLS_ACC
 unsigned NUM_BANKS = 8;
